@@ -10,3 +10,4 @@ pnpm-debug.log*
 x_post_video.mp4
 video_frames
 public/images/*.png
+!public/images/niulai-sketch-transparent.png

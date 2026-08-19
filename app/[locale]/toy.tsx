@@ -211,7 +211,7 @@ export function NiuLaiToy({ locale, copy }: Props) {
           <button className={`cow-card ${isCalling ? "is-calling" : ""}`} type="button" onClick={callCow} aria-label={copy.tapCow}>
             <span className="paper-grain" />
             <span className="tap-burst">点我</span>
-            <img className="cow-art cow-sketch" src="/images/niulai-sketch.png" alt={copy.tapCow} />
+            <img className="cow-art cow-sketch" src="/images/niulai-sketch-transparent.png" alt={copy.tapCow} />
           </button>
 
           <aside className="control-panel">

@@ -4,7 +4,7 @@
 
 ## 素材说明
 
-- 黑白简笔画牛来形象：页面使用用户提供的 `public/images/niulai-sketch.png`。
+- 黑白简笔画牛来形象：页面使用透明背景的 `public/images/niulai-sketch-transparent.png`。
 - 点击音效：`public/sounds/video-call-1.mp3`、`video-call-2.mp3`、`video-call-3.mp3`，分别从用户提供的 `1.mp4`、`2.mp4`、`3.mp4` 提取。中文和英文页面共用这三段音效，每次点击随机播放一段。
 - 备用牛叫声：`public/sounds/cow-moos-cc0.mp3`，来源 BigSoundBank Cow Moos #1，CC0 public domain。
 
