@@ -34,6 +34,7 @@ export function NiuLaiToy({ locale, copy }: Props) {
   const [isCalling, setIsCalling] = useState(false);
   const [copied, setCopied] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
+  const customAudios = useRef<{ mama: HTMLAudioElement; niulai: HTMLAudioElement } | null>(null);
   const cowAudio = useRef<HTMLAudioElement | null>(null);
   const storageKey = `niulai:calls:${locale}`;
   const otherLocale = locale === "zh" ? "en" : "zh";
@@ -56,29 +57,51 @@ export function NiuLaiToy({ locale, copy }: Props) {
     cowAudio.current = new Audio("/sounds/cow-moos-cc0.mp3");
     cowAudio.current.preload = "auto";
     cowAudio.current.volume = 0.9;
+    customAudios.current = {
+      mama: new Audio("/sounds/mama.mp3"),
+      niulai: new Audio("/sounds/niulai.mp3")
+    };
+    customAudios.current.mama.preload = "auto";
+    customAudios.current.niulai.preload = "auto";
+    customAudios.current.mama.volume = 1;
+    customAudios.current.niulai.volume = 1;
 
     return () => {
       cowAudio.current?.pause();
       cowAudio.current = null;
+      customAudios.current?.mama.pause();
+      customAudios.current?.niulai.pause();
+      customAudios.current = null;
     };
   }, []);
 
-  function playCowMoo() {
-    const audio = cowAudio.current;
+  async function playAudio(audio: HTMLAudioElement | null, maxDurationMs: number) {
     if (!audio) return false;
 
-    audio.pause();
-    audio.currentTime = 0;
-    void audio.play().catch(() => undefined);
-    window.setTimeout(() => audio.pause(), 3200);
-    return true;
+    try {
+      audio.pause();
+      audio.currentTime = 0;
+      await audio.play();
+      window.setTimeout(() => audio.pause(), maxDurationMs);
+      return true;
+    } catch {
+      return false;
+    }
   }
 
-  function playMamaCall() {
+  function playSpokenCall(kind: "mama" | "niulai") {
     if (!("speechSynthesis" in window)) return false;
 
     window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(locale === "zh" ? "牛来，牛来，快回来吃饭啦" : "Niu Lai, Niu Lai, come here");
+    const utterance = new SpeechSynthesisUtterance(
+      kind === "mama"
+        ? locale === "zh"
+          ? "妈妈"
+          : "mama"
+        : locale === "zh"
+          ? "牛来"
+          : "Niu Lai"
+    );
     const voices = window.speechSynthesis.getVoices();
     const zhVoice = voices.find((voice) => voice.lang.toLowerCase().startsWith("zh"));
     if (zhVoice) utterance.voice = zhVoice;
@@ -109,17 +132,25 @@ export function NiuLaiToy({ locale, copy }: Props) {
     oscillator.stop(now + 0.52);
   }
 
-  function playRandomCall() {
+  async function playRandomCall() {
     if (muted) return;
 
-    const played = Math.random() < 0.5 ? playCowMoo() : playMamaCall();
-    if (!played) playFallbackTone();
+    const kind = Math.random() < 0.5 ? "mama" : "niulai";
+    const custom = customAudios.current?.[kind] ?? null;
+    const customPlayed = await playAudio(custom, 2600);
+    if (customPlayed) return;
+
+    const ttsPlayed = playSpokenCall(kind);
+    if (ttsPlayed) return;
+
+    const mooPlayed = await playAudio(cowAudio.current, 3200);
+    if (!mooPlayed) playFallbackTone();
   }
 
   function callCow() {
     setCalls((value) => value + 1);
     setIsCalling(true);
-    playRandomCall();
+    void playRandomCall();
     window.setTimeout(() => setIsCalling(false), 560);
   }
 
@@ -190,7 +221,7 @@ export function NiuLaiToy({ locale, copy }: Props) {
           <button className={`cow-card ${isCalling ? "is-calling" : ""}`} type="button" onClick={callCow} aria-label={copy.tapCow}>
             <span className="paper-grain" />
             <span className="tap-burst">点我</span>
-            <img className="cow-art" src="/images/niulai-q.webp" alt={copy.tapCow} />
+            <img className="cow-art cow-sketch" src="/images/niulai-sketch.svg" alt={copy.tapCow} />
           </button>
 
           <aside className="control-panel">

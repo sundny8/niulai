@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 980" role="img" aria-labelledby="title desc">
+  <title id="title">牛来简笔画</title>
+  <desc id="desc">橙色 Q 版牛来简笔画，斜眼、大嘴、短角和圆肚子。</desc>
+  <defs>
+    <filter id="rough">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="8" />
+      <feDisplacementMap in="SourceGraphic" scale="2.2" />
+    </filter>
+    <style>
+      .line{fill:none;stroke:#241d18;stroke-width:13;stroke-linecap:round;stroke-linejoin:round;filter:url(#rough)}
+      .thin{fill:none;stroke:#241d18;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;filter:url(#rough)}
+      .fur{fill:#ef6f2c;stroke:#241d18;stroke-width:13;stroke-linecap:round;stroke-linejoin:round;filter:url(#rough)}
+      .cream{fill:#ffe0a8;stroke:#241d18;stroke-width:11;stroke-linecap:round;stroke-linejoin:round;filter:url(#rough)}
+      .horn{fill:#4d4a4c;stroke:#241d18;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;filter:url(#rough)}
+      .shade{fill:none;stroke:#d95522;stroke-width:7;stroke-linecap:round;opacity:.58;filter:url(#rough)}
+      .white{fill:#fff4dd;stroke:#241d18;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;filter:url(#rough)}
+      .eye{fill:#fff8ef;stroke:#241d18;stroke-width:9;filter:url(#rough)}
+      .pupil{fill:#60402e}
+      .brow{fill:none;stroke:#413b3d;stroke-width:14;stroke-linecap:round;filter:url(#rough)}
+    </style>
+  </defs>
+
+  <path class="fur" d="M215 332c-40 44-61 116-57 211 8 173 91 304 215 304 136 0 225-131 229-313 2-96-27-167-72-208-55-50-241-45-315 6Z"/>
+  <path class="fur" d="M187 282c-6-99 49-176 159-187 112-12 221 47 229 151 8 98-61 168-184 175-115 7-198-42-204-139Z"/>
+  <path class="horn" d="M258 106c-25-39-39-70-35-96 41 12 72 41 85 87"/>
+  <path class="horn" d="M501 103c32-36 54-65 59-92-43 4-80 26-101 69"/>
+  <path class="fur" d="M195 244c-48-37-86-45-115-23 25 58 68 87 123 70"/>
+  <path class="fur" d="M570 231c51-32 90-35 116-10-31 55-76 78-128 55"/>
+
+  <path class="cream" d="M241 283c24-50 82-80 150-83 82-4 143 31 166 91 25 66-39 124-155 130-120 7-190-65-161-138Z"/>
+  <path class="thin" d="M284 336c50 28 156 28 213-6"/>
+  <path class="thin" d="M319 279c-13 4-21 12-25 24"/>
+  <path class="thin" d="M454 274c15 2 25 10 32 21"/>
+
+  <ellipse class="eye" cx="307" cy="220" rx="56" ry="27" transform="rotate(-8 307 220)"/>
+  <ellipse class="eye" cx="459" cy="218" rx="58" ry="27" transform="rotate(7 459 218)"/>
+  <circle class="pupil" cx="327" cy="218" r="14"/>
+  <circle class="pupil" cx="438" cy="219" r="14"/>
+  <path class="brow" d="M248 171c31-16 65-22 95-17"/>
+  <path class="brow" d="M430 153c34-5 67 2 94 21"/>
+
+  <path class="shade" d="M248 455c-18 81-5 169 38 238"/>
+  <path class="shade" d="M506 449c30 78 27 173-9 248"/>
+  <path class="shade" d="M330 510c30 18 82 18 115 0"/>
+
+  <path class="line" d="M170 468c-50 41-74 90-78 146"/>
+  <path class="white" d="M82 612c34 8 61 29 79 61-51 17-89-3-79-61Z"/>
+  <path class="line" d="M585 460c62 30 92 76 95 138"/>
+  <path class="white" d="M682 596c-35 12-58 36-71 70 54 9 88-18 71-70Z"/>
+
+  <path class="fur" d="M292 817c-45 37-72 82-82 136 47 19 94 14 141-15 0-49-18-88-59-121Z"/>
+  <path class="fur" d="M482 813c47 34 78 78 91 131-45 23-93 22-143-3-4-48 12-89 52-128Z"/>
+  <path class="white" d="M198 929c53-16 99-11 138 16-36 30-83 38-141 25-6-12-5-26 3-41Z"/>
+  <path class="white" d="M424 939c39-30 86-39 141-26 10 14 12 28 7 41-56 17-104 12-148-15Z"/>
+  <path class="thin" d="M237 932c-9 18-12 33-8 45"/>
+  <path class="thin" d="M293 931c-5 17-6 31-3 43"/>
+  <path class="thin" d="M474 929c5 17 6 32 2 45"/>
+  <path class="thin" d="M529 925c9 17 12 32 9 44"/>
+</svg>

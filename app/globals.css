@@ -197,6 +197,10 @@ a {
   -webkit-user-drag: none;
 }
 
+.cow-sketch {
+  width: min(78%, 390px);
+}
+
 .cow-card:hover .cow-art {
   transform: rotate(-2deg) translateY(-8px) scale(1.035);
   filter: drop-shadow(0 22px 0 rgba(32, 28, 23, 0.11)) drop-shadow(0 30px 28px rgba(32, 28, 23, 0.24));
