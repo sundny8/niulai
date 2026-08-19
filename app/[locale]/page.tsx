@@ -5,7 +5,7 @@ const copy = {
   zh: {
     title: "牛来一下",
     eyebrow: "一按，牛来",
-    headline: "叫一声牛来",
+    headline: "牛来~~",
     subline: "点按钮，或者直接点这头牛。声音会来，运气也可以顺路来。",
     button: "叫“牛来”",
     tapCow: "牛也能点",

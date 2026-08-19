@@ -249,6 +249,7 @@ h1 {
   font-size: clamp(54px, 8vw, 86px);
   line-height: 0.9;
   letter-spacing: 0;
+  white-space: nowrap;
   border-bottom: 4px solid var(--edge);
   transform: rotate(-2deg);
 }

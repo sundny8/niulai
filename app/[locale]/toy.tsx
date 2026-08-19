@@ -141,34 +141,43 @@ export function NiuLaiToy({ locale, copy }: Props) {
     return { url, text };
   }
 
-  async function copyShareText() {
-    const { text } = sharePayload();
-    if (navigator.clipboard) {
-      await navigator.clipboard.writeText(text);
-    } else {
-      const textarea = document.createElement("textarea");
-      textarea.value = text;
-      textarea.style.position = "fixed";
-      textarea.style.left = "-9999px";
-      document.body.appendChild(textarea);
-      textarea.focus();
-      textarea.select();
-      document.execCommand("copy");
-      textarea.remove();
+  async function writeClipboard(value: string) {
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(value);
+        return;
+      }
+    } catch {
+      // Fall through to the textarea-based fallback for non-secure contexts.
     }
+
+    const textarea = document.createElement("textarea");
+    textarea.value = value;
+    textarea.style.position = "fixed";
+    textarea.style.left = "-9999px";
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    document.execCommand("copy");
+    textarea.remove();
+  }
+
+  function markCopied() {
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1400);
   }
 
-  async function shareNative() {
-    const { url, text } = sharePayload();
+  async function copyShareLink() {
+    const { url } = sharePayload();
+    await writeClipboard(url);
+    markCopied();
+    setShareOpen(true);
+  }
 
-    if (navigator.share) {
-      await navigator.share({ title: copy.title, text, url }).catch(() => undefined);
-      return;
-    }
-
-    setShareOpen((value) => !value);
+  async function copyShareText() {
+    const { text } = sharePayload();
+    await writeClipboard(text);
+    markCopied();
   }
 
   function shareToX() {
@@ -221,11 +230,11 @@ export function NiuLaiToy({ locale, copy }: Props) {
             </div>
 
             <div className="share-box">
-              <button className="share-button" type="button" onClick={shareNative}>
-                {copy.share}
+              <button className="share-button" type="button" onClick={copyShareLink}>
+                {copied ? copy.copied : copy.share}
               </button>
               <div className={`share-menu ${shareOpen ? "is-open" : ""}`}>
-                <button type="button" onClick={copyShareText}>{copied ? copy.copied : copy.copyLink}</button>
+                <button type="button" onClick={copyShareLink}>{copy.copyLink}</button>
                 <button type="button" onClick={copyShareText}>{copy.shareWechat}</button>
                 <button type="button" onClick={shareToX}>{copy.shareX}</button>
                 <button type="button" onClick={copyShareText}>{copy.shareXhs}</button>
