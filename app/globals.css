@@ -1,0 +1,481 @@
+:root {
+  --ink: #201c17;
+  --paper: #f4ecdc;
+  --paper-deep: #e5d6bb;
+  --edge: #2d2922;
+  --red: #d64b37;
+  --green: #48725d;
+  --shadow: rgba(31, 25, 18, 0.22);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  color: var(--ink);
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.22) 1px, transparent 1px) 0 0 / 22px 22px,
+    linear-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px) 0 0 / 22px 22px,
+    #a9aca2;
+}
+
+body {
+  font-family: "Trebuchet MS", "Bradley Hand ITC", "Comic Sans MS", sans-serif;
+}
+
+button,
+a {
+  color: inherit;
+  font: inherit;
+}
+
+.sheet-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+}
+
+.sheet {
+  position: relative;
+  width: min(1120px, 100%);
+  min-height: min(720px, calc(100vh - 56px));
+  padding: 28px 42px 24px;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.56), transparent 28%),
+    repeating-linear-gradient(0deg, rgba(81, 66, 44, 0.035) 0 1px, transparent 1px 5px),
+    var(--paper);
+  border: 2px solid rgba(45, 41, 34, 0.18);
+  box-shadow: 0 28px 65px var(--shadow);
+  overflow: hidden;
+}
+
+.sheet::before,
+.sheet::after {
+  content: "";
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--ink);
+  top: 14px;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+.sheet::before {
+  left: 14px;
+}
+
+.sheet::after {
+  right: 14px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding-bottom: 12px;
+  border-bottom: 2px dotted rgba(32, 28, 23, 0.55);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.coin {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  background: #f3b83e;
+  border: 2px solid var(--edge);
+  transform: rotate(-9deg);
+  font-weight: 900;
+}
+
+.brand strong {
+  display: block;
+  letter-spacing: 0;
+  font-size: 21px;
+  line-height: 1;
+}
+
+.brand small {
+  display: block;
+  margin-top: 3px;
+  font-size: 11px;
+  color: rgba(32, 28, 23, 0.72);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pill,
+.icon-button,
+.share-button {
+  display: inline-grid;
+  place-items: center;
+  min-height: 34px;
+  border: 2px solid var(--edge);
+  background: transparent;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(32, 28, 23, 0.18);
+}
+
+.pill {
+  min-width: 58px;
+  padding: 0 13px;
+}
+
+.icon-button {
+  width: 38px;
+  border-radius: 999px;
+  font-weight: 900;
+}
+
+.stage {
+  display: grid;
+  grid-template-columns: minmax(360px, 1.08fr) minmax(300px, 0.92fr);
+  gap: clamp(28px, 6vw, 86px);
+  align-items: center;
+  padding: 28px 0 18px;
+}
+
+.cow-card {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 5;
+  width: min(100%, 560px);
+  justify-self: center;
+  border: 3px solid var(--edge);
+  background: #eee4d2;
+  cursor: pointer;
+  box-shadow: 7px 7px 0 rgba(32, 28, 23, 0.16);
+  overflow: hidden;
+}
+
+.paper-grain {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.48), transparent 24%),
+    radial-gradient(circle at 70% 74%, rgba(74, 59, 38, 0.08), transparent 28%),
+    repeating-linear-gradient(120deg, rgba(43, 33, 22, 0.035) 0 1px, transparent 1px 7px);
+}
+
+.cow {
+  position: relative;
+  width: min(72%, 330px);
+  height: min(76%, 430px);
+  transform-origin: 50% 70%;
+}
+
+.cow-card.is-calling .cow,
+.call-button.is-calling {
+  animation: call-shake 560ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.head,
+.body,
+.muzzle,
+.horn,
+.ear,
+.arm,
+.leg,
+.tail {
+  position: absolute;
+  border: 3px solid var(--edge);
+}
+
+.head {
+  left: 18%;
+  top: 6%;
+  width: 64%;
+  height: 43%;
+  border-radius: 48% 48% 40% 40%;
+  border-bottom-color: transparent;
+}
+
+.body {
+  left: 25%;
+  top: 38%;
+  width: 50%;
+  height: 48%;
+  border-radius: 48% 48% 45% 45%;
+  background: transparent;
+}
+
+.muzzle {
+  left: 4%;
+  top: 36%;
+  width: 92%;
+  height: 32%;
+  border-radius: 50%;
+  background: #eadfcd;
+}
+
+.mouth {
+  position: absolute;
+  left: 21%;
+  right: 13%;
+  bottom: 26%;
+  border-bottom: 3px solid var(--edge);
+  transform: rotate(1deg);
+}
+
+.nostril {
+  position: absolute;
+  top: 30%;
+  width: 7px;
+  height: 4px;
+  border-top: 3px solid var(--edge);
+}
+
+.nostril-left {
+  left: 30%;
+  transform: rotate(35deg);
+}
+
+.nostril-right {
+  right: 30%;
+  transform: rotate(-35deg);
+}
+
+.eye {
+  position: absolute;
+  top: 26%;
+  width: 34px;
+  border-top: 4px solid var(--edge);
+}
+
+.eye-left {
+  left: 23%;
+  transform: rotate(5deg);
+}
+
+.eye-right {
+  right: 23%;
+  transform: rotate(-5deg);
+}
+
+.horn {
+  top: -1%;
+  width: 34px;
+  height: 72px;
+  border-bottom: 0;
+  background: transparent;
+}
+
+.horn-left {
+  left: 22%;
+  border-radius: 75% 10% 0 0;
+  transform: rotate(-24deg);
+}
+
+.horn-right {
+  right: 22%;
+  border-radius: 10% 75% 0 0;
+  transform: rotate(24deg);
+}
+
+.ear {
+  top: 27%;
+  width: 54px;
+  height: 42px;
+  border-radius: 70% 15% 70% 15%;
+  background: #eee4d2;
+}
+
+.ear-left {
+  left: 3%;
+  transform: rotate(-24deg);
+}
+
+.ear-right {
+  right: 3%;
+  transform: rotate(24deg) scaleX(-1);
+}
+
+.arm {
+  top: 58%;
+  width: 2px;
+  height: 74px;
+  border-width: 0 0 0 3px;
+}
+
+.arm-left {
+  left: 20%;
+  transform: rotate(28deg);
+}
+
+.arm-right {
+  right: 20%;
+  transform: rotate(-24deg);
+}
+
+.leg {
+  top: 84%;
+  width: 2px;
+  height: 42px;
+  border-width: 0 0 0 3px;
+}
+
+.leg-left {
+  left: 39%;
+  transform: rotate(12deg);
+}
+
+.leg-right {
+  right: 39%;
+  transform: rotate(-9deg);
+}
+
+.tail {
+  right: 16%;
+  top: 67%;
+  width: 54px;
+  height: 48px;
+  border-width: 0 3px 3px 0;
+  border-radius: 0 0 80% 0;
+}
+
+.control-panel {
+  text-align: center;
+  max-width: 420px;
+  justify-self: center;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  text-transform: uppercase;
+  font-size: 14px;
+  letter-spacing: 0;
+  color: rgba(32, 28, 23, 0.72);
+}
+
+h1 {
+  display: inline-block;
+  margin: 0;
+  font-size: clamp(54px, 8vw, 86px);
+  line-height: 0.9;
+  letter-spacing: 0;
+  border-bottom: 4px solid var(--edge);
+  transform: rotate(-2deg);
+}
+
+.subline {
+  margin: 13px auto 24px;
+  max-width: 380px;
+  font-size: 17px;
+  line-height: 1.75;
+}
+
+.call-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: min(100%, 340px);
+  min-height: 64px;
+  padding: 0 22px;
+  border: 3px double var(--edge);
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 5px 5px 0 rgba(32, 28, 23, 0.16);
+  cursor: pointer;
+  font-weight: 900;
+  font-size: 20px;
+}
+
+.call-button span {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.stats {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin: 18px 0 14px;
+  font-size: 14px;
+  color: rgba(32, 28, 23, 0.72);
+}
+
+.stats span {
+  border-bottom: 2px dotted rgba(32, 28, 23, 0.42);
+}
+
+.share-button {
+  margin-inline: auto;
+  min-width: 112px;
+  padding: 0 18px;
+  background: rgba(72, 114, 93, 0.1);
+}
+
+footer {
+  margin-top: 10px;
+  padding-top: 12px;
+  border-top: 2px dotted rgba(32, 28, 23, 0.35);
+  text-align: center;
+  font-size: 13px;
+  color: rgba(32, 28, 23, 0.68);
+}
+
+@keyframes call-shake {
+  0%,
+  100% {
+    transform: rotate(0deg) translateY(0);
+  }
+  22% {
+    transform: rotate(-3deg) translateY(-5px);
+  }
+  46% {
+    transform: rotate(4deg) translateY(3px);
+  }
+  68% {
+    transform: rotate(-2deg) translateY(-2px);
+  }
+}
+
+@media (max-width: 820px) {
+  .sheet-shell {
+    padding: 12px;
+    place-items: stretch;
+  }
+
+  .sheet {
+    min-height: calc(100vh - 24px);
+    padding: 24px 18px 18px;
+  }
+
+  .stage {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+
+  .cow-card {
+    width: min(100%, 410px);
+  }
+
+  h1 {
+    font-size: clamp(46px, 14vw, 62px);
+  }
+
+  .subline {
+    font-size: 15px;
+  }
+}
