@@ -14,6 +14,10 @@ type ToyCopy = {
   soundOn: string;
   langLabel: string;
   share: string;
+  shareWechat: string;
+  shareX: string;
+  shareXhs: string;
+  copyLink: string;
   copied: string;
   footer: string;
   shareText: string;
@@ -29,7 +33,8 @@ export function NiuLaiToy({ locale, copy }: Props) {
   const [muted, setMuted] = useState(false);
   const [isCalling, setIsCalling] = useState(false);
   const [copied, setCopied] = useState(false);
-  const audioContext = useRef<AudioContext | null>(null);
+  const [shareOpen, setShareOpen] = useState(false);
+  const cowAudio = useRef<HTMLAudioElement | null>(null);
   const storageKey = `niulai:calls:${locale}`;
   const otherLocale = locale === "zh" ? "en" : "zh";
 
@@ -47,54 +52,116 @@ export function NiuLaiToy({ locale, copy }: Props) {
     return calls === 1 ? "1 call" : `${calls} ${copy.calls}`;
   }, [calls, copy.calls, locale]);
 
-  function playNiuLai() {
-    if (muted) return;
+  useEffect(() => {
+    cowAudio.current = new Audio("/sounds/cow-moos-cc0.mp3");
+    cowAudio.current.preload = "auto";
+    cowAudio.current.volume = 0.9;
 
+    return () => {
+      cowAudio.current?.pause();
+      cowAudio.current = null;
+    };
+  }, []);
+
+  function playCowMoo() {
+    const audio = cowAudio.current;
+    if (!audio) return false;
+
+    audio.pause();
+    audio.currentTime = 0;
+    void audio.play().catch(() => undefined);
+    window.setTimeout(() => audio.pause(), 3200);
+    return true;
+  }
+
+  function playMamaCall() {
+    if (!("speechSynthesis" in window)) return false;
+
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(locale === "zh" ? "牛来，牛来，快回来吃饭啦" : "Niu Lai, Niu Lai, come here");
+    const voices = window.speechSynthesis.getVoices();
+    const zhVoice = voices.find((voice) => voice.lang.toLowerCase().startsWith("zh"));
+    if (zhVoice) utterance.voice = zhVoice;
+    utterance.lang = locale === "zh" ? "zh-CN" : "en-US";
+    utterance.pitch = 1.25;
+    utterance.rate = 0.92;
+    utterance.volume = 1;
+    window.speechSynthesis.speak(utterance);
+    return true;
+  }
+
+  function playFallbackTone() {
     const AudioCtor = window.AudioContext || window.webkitAudioContext;
     if (!AudioCtor) return;
-    const ctx = audioContext.current ?? new AudioCtor();
-    audioContext.current = ctx;
-
+    const ctx = new AudioCtor();
+    const oscillator = ctx.createOscillator();
+    const gain = ctx.createGain();
     const now = ctx.currentTime;
-    const syllables = [
-      { start: 0, freq: 190, end: 156, duration: 0.18 },
-      { start: 0.2, freq: 247, end: 210, duration: 0.24 }
-    ];
 
-    syllables.forEach((part) => {
-      const oscillator = ctx.createOscillator();
-      const gain = ctx.createGain();
-      oscillator.type = "triangle";
-      oscillator.frequency.setValueAtTime(part.freq, now + part.start);
-      oscillator.frequency.exponentialRampToValueAtTime(part.end, now + part.start + part.duration);
-      gain.gain.setValueAtTime(0.0001, now + part.start);
-      gain.gain.exponentialRampToValueAtTime(0.22, now + part.start + 0.03);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + part.start + part.duration);
-      oscillator.connect(gain).connect(ctx.destination);
-      oscillator.start(now + part.start);
-      oscillator.stop(now + part.start + part.duration + 0.04);
-    });
+    oscillator.type = "sawtooth";
+    oscillator.frequency.setValueAtTime(128, now);
+    oscillator.frequency.exponentialRampToValueAtTime(86, now + 0.42);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.18, now + 0.04);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.48);
+    oscillator.connect(gain).connect(ctx.destination);
+    oscillator.start(now);
+    oscillator.stop(now + 0.52);
+  }
+
+  function playRandomCall() {
+    if (muted) return;
+
+    const played = Math.random() < 0.5 ? playCowMoo() : playMamaCall();
+    if (!played) playFallbackTone();
   }
 
   function callCow() {
     setCalls((value) => value + 1);
     setIsCalling(true);
-    playNiuLai();
+    playRandomCall();
     window.setTimeout(() => setIsCalling(false), 560);
   }
 
-  async function share() {
+  function sharePayload() {
     const url = window.location.href;
     const text = `${copy.shareText} ${url}`;
+    return { url, text };
+  }
+
+  async function copyShareText() {
+    const { text } = sharePayload();
+    if (navigator.clipboard) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.style.position = "fixed";
+      textarea.style.left = "-9999px";
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      document.execCommand("copy");
+      textarea.remove();
+    }
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1400);
+  }
+
+  async function shareNative() {
+    const { url, text } = sharePayload();
 
     if (navigator.share) {
       await navigator.share({ title: copy.title, text, url }).catch(() => undefined);
       return;
     }
 
-    await navigator.clipboard.writeText(text);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1400);
+    setShareOpen((value) => !value);
+  }
+
+  function shareToX() {
+    const { text } = sharePayload();
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   }
 
   return (
@@ -104,7 +171,7 @@ export function NiuLaiToy({ locale, copy }: Props) {
           <a className="brand" href={`/${locale}`} aria-label={copy.title}>
             <span className="coin">牛</span>
             <span>
-              <strong>NIU LAI</strong>
+              <strong>牛来</strong>
               <small>{copy.eyebrow}</small>
             </span>
           </a>
@@ -122,27 +189,8 @@ export function NiuLaiToy({ locale, copy }: Props) {
         <div className="stage">
           <button className={`cow-card ${isCalling ? "is-calling" : ""}`} type="button" onClick={callCow} aria-label={copy.tapCow}>
             <span className="paper-grain" />
-            <span className="cow">
-              <span className="horn horn-left" />
-              <span className="horn horn-right" />
-              <span className="ear ear-left" />
-              <span className="ear ear-right" />
-              <span className="head">
-                <span className="eye eye-left" />
-                <span className="eye eye-right" />
-                <span className="muzzle">
-                  <span className="nostril nostril-left" />
-                  <span className="nostril nostril-right" />
-                  <span className="mouth" />
-                </span>
-              </span>
-              <span className="body" />
-              <span className="arm arm-left" />
-              <span className="arm arm-right" />
-              <span className="leg leg-left" />
-              <span className="leg leg-right" />
-              <span className="tail" />
-            </span>
+            <span className="tap-burst">点我</span>
+            <img className="cow-art" src="/images/niulai-q.webp" alt={copy.tapCow} />
           </button>
 
           <aside className="control-panel">
@@ -160,9 +208,17 @@ export function NiuLaiToy({ locale, copy }: Props) {
               <span>{muted ? copy.muted : copy.soundOn}</span>
             </div>
 
-            <button className="share-button" type="button" onClick={share}>
-              {copied ? copy.copied : copy.share}
-            </button>
+            <div className="share-box">
+              <button className="share-button" type="button" onClick={shareNative}>
+                {copy.share}
+              </button>
+              <div className={`share-menu ${shareOpen ? "is-open" : ""}`}>
+                <button type="button" onClick={copyShareText}>{copied ? copy.copied : copy.copyLink}</button>
+                <button type="button" onClick={copyShareText}>{copy.shareWechat}</button>
+                <button type="button" onClick={shareToX}>{copy.shareX}</button>
+                <button type="button" onClick={copyShareText}>{copy.shareXhs}</button>
+              </div>
+            </div>
           </aside>
         </div>
 

@@ -2,6 +2,12 @@
 
 一个轻量的网页玩具站：点一下按钮或手绘牛，播放“牛来”风格的合成音效，并记录本地召唤次数。
 
+## 素材说明
+
+- Q 版牛来形象：基于用户提供参考图重新生成的原创网页资产，页面使用 `public/images/niulai-q.webp`。
+- 牛叫声：`public/sounds/cow-moos-cc0.mp3`，来源 BigSoundBank Cow Moos #1，CC0 public domain。
+- 妈妈喊“牛来”：运行时使用浏览器 SpeechSynthesis 生成，避免嵌入电影原声片段。
+
 ## 本地运行
 
 ```bash
