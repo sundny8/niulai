@@ -28,14 +28,21 @@ type Props = {
   copy: ToyCopy;
 };
 
+const clickSoundPaths = [
+  "/sounds/video-call-1.mp3",
+  "/sounds/video-call-2.mp3",
+  "/sounds/video-call-3.mp3"
+] as const;
+
 export function NiuLaiToy({ locale, copy }: Props) {
   const [calls, setCalls] = useState(0);
   const [muted, setMuted] = useState(false);
   const [isCalling, setIsCalling] = useState(false);
   const [copied, setCopied] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
-  const customAudios = useRef<{ mama: HTMLAudioElement; niulai: HTMLAudioElement } | null>(null);
+  const clickAudios = useRef<HTMLAudioElement[]>([]);
   const cowAudio = useRef<HTMLAudioElement | null>(null);
+  const lastSoundIndex = useRef(-1);
   const storageKey = `niulai:calls:${locale}`;
   const otherLocale = locale === "zh" ? "en" : "zh";
 
@@ -57,60 +64,32 @@ export function NiuLaiToy({ locale, copy }: Props) {
     cowAudio.current = new Audio("/sounds/cow-moos-cc0.mp3");
     cowAudio.current.preload = "auto";
     cowAudio.current.volume = 0.9;
-    customAudios.current = {
-      mama: new Audio("/sounds/mama.mp3"),
-      niulai: new Audio("/sounds/niulai.mp3")
-    };
-    customAudios.current.mama.preload = "auto";
-    customAudios.current.niulai.preload = "auto";
-    customAudios.current.mama.volume = 1;
-    customAudios.current.niulai.volume = 1;
+    clickAudios.current = clickSoundPaths.map((path) => {
+      const audio = new Audio(path);
+      audio.preload = "auto";
+      audio.volume = 1;
+      return audio;
+    });
 
     return () => {
       cowAudio.current?.pause();
       cowAudio.current = null;
-      customAudios.current?.mama.pause();
-      customAudios.current?.niulai.pause();
-      customAudios.current = null;
+      clickAudios.current.forEach((audio) => audio.pause());
+      clickAudios.current = [];
     };
   }, []);
 
-  async function playAudio(audio: HTMLAudioElement | null, maxDurationMs: number) {
+  async function playAudio(audio: HTMLAudioElement | null) {
     if (!audio) return false;
 
     try {
       audio.pause();
       audio.currentTime = 0;
       await audio.play();
-      window.setTimeout(() => audio.pause(), maxDurationMs);
       return true;
     } catch {
       return false;
     }
-  }
-
-  function playSpokenCall(kind: "mama" | "niulai") {
-    if (!("speechSynthesis" in window)) return false;
-
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(
-      kind === "mama"
-        ? locale === "zh"
-          ? "妈妈"
-          : "mama"
-        : locale === "zh"
-          ? "牛来"
-          : "Niu Lai"
-    );
-    const voices = window.speechSynthesis.getVoices();
-    const zhVoice = voices.find((voice) => voice.lang.toLowerCase().startsWith("zh"));
-    if (zhVoice) utterance.voice = zhVoice;
-    utterance.lang = locale === "zh" ? "zh-CN" : "en-US";
-    utterance.pitch = 1.25;
-    utterance.rate = 0.92;
-    utterance.volume = 1;
-    window.speechSynthesis.speak(utterance);
-    return true;
   }
 
   function playFallbackTone() {
@@ -135,15 +114,17 @@ export function NiuLaiToy({ locale, copy }: Props) {
   async function playRandomCall() {
     if (muted) return;
 
-    const kind = Math.random() < 0.5 ? "mama" : "niulai";
-    const custom = customAudios.current?.[kind] ?? null;
-    const customPlayed = await playAudio(custom, 2600);
-    if (customPlayed) return;
+    if (clickAudios.current.length > 0) {
+      let nextIndex = Math.floor(Math.random() * clickAudios.current.length);
+      if (clickAudios.current.length > 1 && nextIndex === lastSoundIndex.current) {
+        nextIndex = (nextIndex + 1) % clickAudios.current.length;
+      }
+      lastSoundIndex.current = nextIndex;
+      const clickSoundPlayed = await playAudio(clickAudios.current[nextIndex]);
+      if (clickSoundPlayed) return;
+    }
 
-    const ttsPlayed = playSpokenCall(kind);
-    if (ttsPlayed) return;
-
-    const mooPlayed = await playAudio(cowAudio.current, 3200);
+    const mooPlayed = await playAudio(cowAudio.current);
     if (!mooPlayed) playFallbackTone();
   }
 
@@ -221,7 +202,7 @@ export function NiuLaiToy({ locale, copy }: Props) {
           <button className={`cow-card ${isCalling ? "is-calling" : ""}`} type="button" onClick={callCow} aria-label={copy.tapCow}>
             <span className="paper-grain" />
             <span className="tap-burst">点我</span>
-            <img className="cow-art cow-sketch" src="/images/niulai-sketch.svg" alt={copy.tapCow} />
+            <img className="cow-art cow-sketch" src="/images/niulai-sketch.png" alt={copy.tapCow} />
           </button>
 
           <aside className="control-panel">
