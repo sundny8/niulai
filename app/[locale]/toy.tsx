@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 type ToyCopy = {
@@ -21,6 +22,11 @@ type ToyCopy = {
   copied: string;
   footer: string;
   shareText: string;
+  about: string;
+  contact: string;
+  privacy: string;
+  terms: string;
+  footerNav: string;
 };
 
 type Props = {
@@ -109,6 +115,7 @@ export function NiuLaiToy({ locale, copy }: Props) {
     oscillator.connect(gain).connect(ctx.destination);
     oscillator.start(now);
     oscillator.stop(now + 0.52);
+    window.setTimeout(() => void ctx.close(), 700);
   }
 
   async function playRandomCall() {
@@ -178,6 +185,7 @@ export function NiuLaiToy({ locale, copy }: Props) {
     const { text } = sharePayload();
     await writeClipboard(text);
     markCopied();
+    setShareOpen(false);
   }
 
   function shareToX() {
@@ -190,7 +198,7 @@ export function NiuLaiToy({ locale, copy }: Props) {
       <section className="sheet" aria-label={copy.title}>
         <header className="topbar">
           <a className="brand" href={`/${locale}`} aria-label={copy.title}>
-            <span className="coin">牛</span>
+            <span className="coin" aria-hidden="true">牛</span>
             <span>
               <strong>牛来</strong>
               <small>{copy.eyebrow}</small>
@@ -201,8 +209,8 @@ export function NiuLaiToy({ locale, copy }: Props) {
             <a className="pill" href={`/${otherLocale}`}>
               {copy.langLabel}
             </a>
-            <button className="icon-button" type="button" onClick={() => setMuted((value) => !value)} aria-label={muted ? copy.muted : copy.soundOn}>
-              {muted ? "×" : "))"}
+            <button className="icon-button" type="button" onClick={() => setMuted((value) => !value)} aria-label={muted ? copy.soundOn : copy.muted} aria-pressed={muted}>
+              <span aria-hidden="true">{muted ? "×" : "))"}</span>
             </button>
           </nav>
         </header>
@@ -211,7 +219,7 @@ export function NiuLaiToy({ locale, copy }: Props) {
           <button className={`cow-card ${isCalling ? "is-calling" : ""}`} type="button" onClick={callCow} aria-label={copy.tapCow}>
             <span className="paper-grain" />
             <span className="tap-burst">点我</span>
-            <img className="cow-art cow-sketch" src="/images/niulai-sketch-transparent.png" alt={copy.tapCow} />
+            <Image className="cow-art cow-sketch" src="/images/niulai-sketch.svg" alt={copy.tapCow} width={620} height={760} priority sizes="(max-width: 820px) 84vw, 430px" />
           </button>
 
           <aside className="control-panel">
@@ -220,20 +228,20 @@ export function NiuLaiToy({ locale, copy }: Props) {
             <p className="subline">{copy.subline}</p>
 
             <button className={`call-button ${isCalling ? "is-calling" : ""}`} type="button" onClick={callCow}>
-              <span>*</span>
+              <span aria-hidden="true">✳</span>
               {copy.button}
             </button>
 
             <div className="stats">
-              <span>{callLabel}</span>
+              <span aria-live="polite">{callLabel}</span>
               <span>{muted ? copy.muted : copy.soundOn}</span>
             </div>
 
             <div className="share-box">
-              <button className="share-button" type="button" onClick={copyShareLink}>
+              <button className="share-button" type="button" onClick={() => setShareOpen((value) => !value)} aria-expanded={shareOpen} aria-controls="share-menu">
                 {copied ? copy.copied : copy.share}
               </button>
-              <div className={`share-menu ${shareOpen ? "is-open" : ""}`}>
+              <div id="share-menu" className={`share-menu ${shareOpen ? "is-open" : ""}`}>
                 <button type="button" onClick={copyShareLink}>{copy.copyLink}</button>
                 <button type="button" onClick={copyShareText}>{copy.shareWechat}</button>
                 <button type="button" onClick={shareToX}>{copy.shareX}</button>
@@ -243,7 +251,15 @@ export function NiuLaiToy({ locale, copy }: Props) {
           </aside>
         </div>
 
-        <footer>{copy.footer}</footer>
+        <footer>
+          <span>{copy.footer}</span>
+          <nav className="footer-links" aria-label={copy.footerNav}>
+            <a href="/about">{copy.about}</a>
+            <a href="/contact">{copy.contact}</a>
+            <a href="/privacy">{copy.privacy}</a>
+            <a href="/terms">{copy.terms}</a>
+          </nav>
+        </footer>
       </section>
     </main>
   );

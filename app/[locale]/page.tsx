@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { NiuLaiToy } from "./toy";
+import { localeCode, siteUrl, socialImage } from "../site";
 
 const copy = {
   zh: {
@@ -20,7 +22,12 @@ const copy = {
     copyLink: "复制链接",
     copied: "已复制",
     footer: "适合摸鱼、开会前、发朋友圈前，以及任何需要一点玄学推动的时刻。",
-    shareText: "我刚刚召唤了一声牛来，你也试试："
+    shareText: "我刚刚召唤了一声牛来，你也试试：",
+    about: "关于",
+    contact: "联系",
+    privacy: "隐私",
+    terms: "条款",
+    footerNav: "站点信息"
   },
   en: {
     title: "Niu Lai Button",
@@ -40,7 +47,12 @@ const copy = {
     copyLink: "Copy link",
     copied: "Copied",
     footer: "For breaks, launches, group chats, and any moment that needs a little unreasonable forward motion.",
-    shareText: "I just called Niu Lai. Your turn:"
+    shareText: "I just called Niu Lai. Your turn:",
+    about: "About",
+    contact: "Contact",
+    privacy: "Privacy",
+    terms: "Terms",
+    footerNav: "Site information"
   }
 } as const;
 
@@ -64,12 +76,64 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         zh: "/zh",
         en: "/en"
       }
+    },
+    openGraph: {
+      title: t.title,
+      description: t.subline,
+      type: "website",
+      url: `${siteUrl}/${safeLocale}`,
+      locale: localeCode(safeLocale).replace("-", "_"),
+      images: [socialImage]
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: t.title,
+      description: t.subline,
+      images: [socialImage.url]
     }
   };
 }
 
 export default async function LocalePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  if (locale !== "zh" && locale !== "en") notFound();
+
   const safeLocale: Locale = locale === "en" ? "en" : "zh";
-  return <NiuLaiToy locale={safeLocale} copy={copy[safeLocale]} />;
+  const t = copy[safeLocale];
+  const pageUrl = `${siteUrl}/${safeLocale}`;
+  const language = localeCode(safeLocale);
+  const schema = [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": `${pageUrl}#website`,
+      url: pageUrl,
+      name: t.title,
+      description: t.subline,
+      inLanguage: language,
+      publisher: {
+        "@type": "Organization",
+        name: "牛来一下"
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "@id": `${pageUrl}#application`,
+      name: t.title,
+      url: pageUrl,
+      description: t.subline,
+      image: `${siteUrl}${socialImage.url}`,
+      applicationCategory: "EntertainmentApplication",
+      operatingSystem: "Web",
+      inLanguage: language
+    }
+  ];
+
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <NiuLaiToy locale={safeLocale} copy={t} />
+    </>
+  );
 }
