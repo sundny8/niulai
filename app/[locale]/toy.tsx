@@ -8,6 +8,8 @@ type ToyCopy = {
   eyebrow: string;
   headline: string;
   subline: string;
+  howItWorksTitle: string;
+  howItWorks: string;
   button: string;
   tapCow: string;
   calls: string;
@@ -68,11 +70,11 @@ export function NiuLaiToy({ locale, copy }: Props) {
 
   useEffect(() => {
     cowAudio.current = new Audio("/sounds/cow-moos-cc0.mp3");
-    cowAudio.current.preload = "auto";
+    cowAudio.current.preload = "none";
     cowAudio.current.volume = 0.9;
     clickAudios.current = clickSoundPaths.map((path) => {
       const audio = new Audio(path);
-      audio.preload = "auto";
+      audio.preload = "none";
       audio.volume = 1;
       return audio;
     });
@@ -248,6 +250,11 @@ export function NiuLaiToy({ locale, copy }: Props) {
                 <button type="button" onClick={copyShareText}>{copy.shareXhs}</button>
               </div>
             </div>
+
+            <section className="about-blurb" aria-labelledby="how-it-works">
+              <h2 id="how-it-works">{copy.howItWorksTitle}</h2>
+              <p>{copy.howItWorks}</p>
+            </section>
           </aside>
         </div>
 

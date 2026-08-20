@@ -6,9 +6,13 @@ import { localeCode, siteUrl, socialImage } from "../site";
 const copy = {
   zh: {
     title: "牛来一下",
+    metaTitle: "牛来一下｜在线牛叫音效按钮",
+    metaDescription: "牛来一下是一个轻松好玩的在线牛叫音效按钮，点一下就能播放牛叫声，适合摸鱼、解压、开会前和分享给朋友。无需注册，召唤次数只保存在当前浏览器。",
     eyebrow: "一按，牛来",
-    headline: "牛来~~",
-    subline: "点按钮，或者直接点这头牛。声音会来，运气也可以顺路来。",
+    headline: "牛来一下：在线牛叫音效",
+    subline: "点击按钮或手绘牛，立即播放一声牛来。适合摸鱼、解压、开会前，或把一点玄学分享给朋友。",
+    howItWorksTitle: "怎么玩",
+    howItWorks: "点击按钮或手绘牛即可播放音效；召唤次数只保存在当前浏览器，不需要注册，也不会上传个人资料。",
     button: "叫“牛来”",
     tapCow: "牛也能点",
     calls: "次召唤",
@@ -31,9 +35,13 @@ const copy = {
   },
   en: {
     title: "Niu Lai Button",
+    metaTitle: "Niu Lai Button | Online Cow Sound Effect",
+    metaDescription: "Niu Lai Button is a playful online cow sound effect. Tap the button or cow for an instant moo—no signup, just a tiny boost for breaks, launches, and group chats.",
     eyebrow: "one tap, one call",
-    headline: "Call Niu Lai",
-    subline: "Tap the button or poke the cow. A tiny soundboard for momentum, luck, and deeply unserious focus.",
+    headline: "Niu Lai Button: Cow Sound Effect",
+    subline: "Tap the button or the hand-drawn cow for an instant sound. A tiny, no-signup boost for breaks, launches, group chats, and more.",
+    howItWorksTitle: "How it works",
+    howItWorks: "Tap the button or cow to play a sound. Your call count stays in this browser; no account or personal profile is required.",
     button: "Call “Niu Lai”",
     tapCow: "the cow is clickable",
     calls: "calls",
@@ -68,8 +76,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const t = copy[safeLocale];
 
   return {
-    title: t.title,
-    description: t.subline,
+    title: t.metaTitle,
+    description: t.metaDescription,
     alternates: {
       canonical: `/${safeLocale}`,
       languages: {
@@ -78,8 +86,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       }
     },
     openGraph: {
-      title: t.title,
-      description: t.subline,
+      title: t.metaTitle,
+      description: t.metaDescription,
       type: "website",
       url: `${siteUrl}/${safeLocale}`,
       locale: localeCode(safeLocale).replace("-", "_"),
@@ -87,8 +95,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     },
     twitter: {
       card: "summary_large_image",
-      title: t.title,
-      description: t.subline,
+      title: t.metaTitle,
+      description: t.metaDescription,
       images: [socialImage.url]
     }
   };
@@ -109,7 +117,7 @@ export default async function LocalePage({ params }: { params: Promise<{ locale:
       "@id": `${pageUrl}#website`,
       url: pageUrl,
       name: t.title,
-      description: t.subline,
+      description: t.metaDescription,
       inLanguage: language,
       publisher: {
         "@type": "Organization",
@@ -122,7 +130,7 @@ export default async function LocalePage({ params }: { params: Promise<{ locale:
       "@id": `${pageUrl}#application`,
       name: t.title,
       url: pageUrl,
-      description: t.subline,
+      description: t.metaDescription,
       image: `${siteUrl}${socialImage.url}`,
       applicationCategory: "EntertainmentApplication",
       operatingSystem: "Web",

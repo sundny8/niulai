@@ -340,6 +340,27 @@ h1 {
   cursor: pointer;
 }
 
+.about-blurb {
+  margin: 22px auto 0;
+  max-width: 420px;
+  padding: 14px 16px;
+  border: 2px dashed rgba(32, 28, 23, 0.32);
+  background: rgba(255, 255, 255, 0.22);
+  text-align: left;
+}
+
+.about-blurb h2 {
+  margin: 0 0 6px;
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.about-blurb p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
 footer {
   margin-top: 10px;
   padding-top: 12px;

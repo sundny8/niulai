@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://niulai.kgq.ai/sitemap.xml
